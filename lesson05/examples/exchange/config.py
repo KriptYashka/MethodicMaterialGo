@@ -1,0 +1,47 @@
+# Fruit Exchange — конфигурация
+
+SERVER_HOST = "127.0.0.1"
+SERVER_PORT = 8080
+
+# FruitType enum (должен совпадать с сервером)
+FRUIT_WATERMELON = 0
+FRUIT_MELON = 1
+FRUIT_RASPBERRY = 2
+
+FRUIT_NAMES = {
+    FRUIT_WATERMELON: "watermelon",
+    FRUIT_MELON: "melon",
+    FRUIT_RASPBERRY: "raspberry",
+}
+
+FRUIT_COLORS = {
+    FRUIT_WATERMELON: (0, 200, 80),
+    FRUIT_MELON: (255, 200, 50),
+    FRUIT_RASPBERRY: (220, 50, 80),
+}
+
+# Размеры окна
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 900
+
+# Цвета
+BG_COLOR = (20, 20, 30)
+GREEN = (0, 200, 80)
+RED = (220, 50, 50)
+WHITE = (220, 220, 220)
+GRAY = (120, 120, 120)
+YELLOW = (255, 220, 50)
+ORANGE = (255, 160, 40)
+
+# Параметры графиков
+PRICE_CHART_HEIGHT = 280
+MACD_CHART_HEIGHT = 120
+RSI_CHART_HEIGHT = 100
+
+CHART_MARGIN = 50
+CHART_LEFT = 80
+
+CANDLE_WIDTH = 6
+CANDLE_GAP = 1
+
+MAX_CANDLES = 100
