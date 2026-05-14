@@ -21,24 +21,15 @@ func add(a, b int) int {
 #### Возврат нескольких значений
 
 ```go
-func divide(a, b int) (int, error) {
-    if b == 0 {
-        return 0, errors.New("division by zero")
+func stats(nums []int) (int, int) {
+    sum := 0
+    for _, n := range nums {
+        sum += n
     }
-    return a / b, nil
+    return sum, len(nums)
 }
 
-quotient, err := divide(10, 2)
-```
-
-#### Именованные возвращаемые значения
-
-```go
-func split(sum int) (x, y int) {
-    x = sum * 4 / 9
-    y = sum - x
-    return // naked return
-}
+total, count := stats([]int{1, 2, 3, 4, 5})
 ```
 
 #### Variadic-функции (вариативные)
@@ -60,50 +51,9 @@ nums := []int{1, 2, 3}
 sum(nums...)
 ```
 
-#### Функции как значения
-
-```go
-fn := func(a, b int) int {
-    return a + b
-}
-result := fn(3, 4) // 7
-```
-
-#### Замыкания (closures)
-
-```go
-func counter() func() int {
-    i := 0
-    return func() int {
-        i++
-        return i
-    }
-}
-
-c := counter()
-fmt.Println(c()) // 1
-fmt.Println(c()) // 2
-```
-
-#### defer
-
-Выполняется при выходе из функции (LIFO).
-
-```go
-func readFile(path string) error {
-    f, err := os.Open(path)
-    if err != nil {
-        return err
-    }
-    defer f.Close() // выполнится в конце
-    // работа с файлом...
-    return nil
-}
-```
-
 ### Карты (Maps)
 
-Хеш-таблицы. Ссылочный тип.
+Хеш-таблицы. При присваивании копируется ссылка на внутренние данные (указатель).
 
 #### Создание
 
@@ -160,8 +110,9 @@ if set["apple"] {
 
 #### Важно
 
-- Map — ссылочный тип. При присваивании копируется ссылка.
+- Map при присваивании копирует ссылку на внутренние данные (обе переменные смотрят в одну хеш-таблицу)
 - Zero value для map — nil. Запись в nil-map вызывает panic.
+- Zero value для slice тоже nil: `var s []int` — это nil, `append` работает с nil-срезом
 - Map нельзя сравнивать через `==` (только с nil).
 - Порядок итерации по map случайный.
 
@@ -189,6 +140,20 @@ errors.New("something went wrong")
 fmt.Errorf("user %d not found", id)
 ```
 
+#### Проверка ошибок
+
+```go
+func doSomething() error {
+    return errors.New("something went wrong")
+}
+
+if err := doSomething(); err != nil {
+    fmt.Println("Error:", err)
+}
+```
+
+Этот паттерн — основной в Go. Почти каждая функция может вернуть ошибку, и её надо проверить.
+
 ### Sentinel-ошибки
 
 ```go
@@ -203,7 +168,7 @@ func GetUser(id int) (*User, error) {
 
 // Проверка
 if errors.Is(err, ErrNotFound) {
-    fmt.Println("user not found, creating new one")
+    fmt.Println("user not found")
 }
 ```
 
@@ -217,32 +182,6 @@ if err := doStep(); err != nil {
 // Распаковка
 if errors.Is(err, ErrNotFound) {
     // match
-}
-
-// Проверка типа
-var netErr *net.DNSError
-if errors.As(err, &netErr) {
-    fmt.Println("DNS error:", netErr)
-}
-```
-
-### Собственные типы ошибок
-
-```go
-type ValidationError struct {
-    Field string
-    Value any
-}
-
-func (e *ValidationError) Error() string {
-    return fmt.Sprintf("validation failed on %s", e.Field)
-}
-
-func validate(v any) error {
-    if v == nil {
-        return &ValidationError{Field: "value", Value: v}
-    }
-    return nil
 }
 ```
 
@@ -273,5 +212,4 @@ func safeDiv(a, b int) (result int, ok bool) {
 2. Не игнорируйте ошибки (`_` — только если осознанно)
 3. Добавляйте контекст через `%w`
 4. Используйте sentinel-ошибки для ожидаемых сценариев
-5. Собственные типы — для дополнительных данных
-6. Panic — только при инициализации программы
+5. Panic — только при инициализации программы

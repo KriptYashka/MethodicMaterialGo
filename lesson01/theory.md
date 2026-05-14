@@ -93,20 +93,18 @@ var a int8   = 127          // -128..127
 var b int16  = 32767
 var c int32  = 2147483647
 var d int64  = 9223372036854775807
-var e int    = 42           // платформозависимый (32 или 64 бита)
 
-var u uint   = 100          // беззнаковый
+var e int    = 42           // платформозависимый (32 или 64 бита)
+var u uint   = 100          // платформозависимый беззнаковый
+
 var f float32 = 3.14
 var g float64 = 2.71828
 
-// Строки (immutable, UTF-8)
+// Строки (immutable)
 var s string = "Привет, Go!"
 
 // Булевы
 var ok bool = true
-
-// Комплексные числа
-var c complex128 = 1 + 2i
 ```
 
 ### Константы
@@ -114,15 +112,8 @@ var c complex128 = 1 + 2i
 ```go
 const Pi = 3.14159
 const (
-    StatusOK = 200
+    StatusOK       = 200
     StatusNotFound = 404
-)
-
-// iota — генератор последовательных значений
-const (
-    Red = iota // 0
-    Green      // 1
-    Blue       // 2
 )
 ```
 
@@ -131,9 +122,9 @@ const (
 В Go нет неявного приведения — только явное:
 
 ```go
-var i int = 42
-var f float64 = float64(i)
-var s string = strconv.Itoa(i)
+i := 42
+f := float64(i)
+s := strconv.Itoa(i)  // только для int
 n, _ := strconv.Atoi("123")
 ```
 
@@ -148,14 +139,6 @@ if x > 0 {
     fmt.Println("negative")
 } else {
     fmt.Println("zero")
-}
-```
-
-**Короткая запись с инициализацией:**
-
-```go
-if err := doSomething(); err != nil {
-    fmt.Println("Error:", err)
 }
 ```
 
@@ -296,9 +279,6 @@ copy(dst, s)
 sub := s[1:3]  // [2 3]
 sub := s[:2]   // [1 2]
 sub := s[2:]   // [3 4 5 6 7 8]
-
-// Изменение ёмкости (full slice expression)
-sub := s[1:3:4] // len=2, cap=3
 ```
 
 #### Важно про append
@@ -329,19 +309,5 @@ for _, v := range nums {
 // Только индекс
 for i := range nums {
     fmt.Println(i)
-}
-```
-
-### Строки как байтовые срезы
-
-```go
-s := "hello"
-for i, b := range []byte(s) {
-    fmt.Printf("%d: %d\n", i, b)
-}
-
-// Итерация по рунам (unicode)
-for i, r := range "Привет" {
-    fmt.Printf("%d: %c\n", i, r)
 }
 ```
