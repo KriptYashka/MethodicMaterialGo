@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Занятие 1 — Введение в Go и основы языка</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f7f9fc;
+            color: #1a1a2e;
+            line-height: 1.7;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid #e94560;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .header .meta {
+            margin-top: 12px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav.topics {
+            background: #fff;
+            border-bottom: 1px solid #e0e6ed;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        nav.topics .container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        nav.topics a {
+            color: #0f3460;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        nav.topics a:hover {
+            border-bottom-color: #e94560;
+        }
+
+        .content {
+            padding: 40px 0 80px;
+        }
+
+        .topic {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+        }
+
+        .topic h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #e94560;
+            color: #1a1a2e;
+        }
+
+        .topic h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 28px 0 14px;
+            color: #16213e;
+        }
+
+        .topic h4 {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 22px 0 10px;
+            color: #0f3460;
+        }
+
+        .topic p {
+            margin-bottom: 14px;
+            font-size: 15.5px;
+        }
+
+        .topic ul, .topic ol {
+            margin: 10px 0 14px 24px;
+        }
+
+        .topic li {
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .topic strong {
+            color: #0f3460;
+        }
+
+        .topic .note {
+            background: #f0f4ff;
+            border-left: 4px solid #4a90d9;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14.5px;
+            color: #1a1a2e;
+        }
+
+        .topic .warning {
+            background: #fff8e6;
+            border-left: 4px solid #f0a500;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14.5px;
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block .lang-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #e94560;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 0 8px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .code-block pre {
+            padding: 18px 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e8e8f0;
+            overflow-x: auto;
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        .code-block .kw { color: #c792ea; }
+        .code-block .ty { color: #ffcb6b; }
+        .code-block .str { color: #c3e88d; }
+        .code-block .cm { color: #546e7a; font-style: italic; }
+        .code-block .fn { color: #82aaff; }
+        .code-block .num { color: #f78c6c; }
+        .code-block .op { color: #89ddff; }
+        .code-block .nl { color: #ff5370; }
+
+        .diagram {
+            background: #f0f4ff;
+            border: 1px solid #d0d8e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            color: #1a1a2e;
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 18px 0;
+        }
+
+        .key-point {
+            background: #f7f9fc;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .key-point .icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .key-point .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f3460;
+        }
+
+        .key-point .desc {
+            font-size: 12.5px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #888;
+            font-size: 13px;
+            border-top: 1px solid #e0e6ed;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 24px; }
+            .topic { padding: 20px; }
+            .code-block pre { font-size: 12.5px; padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>Занятие 1: Введение в Go и основы языка</h1>
+    <div class="subtitle">Курс «Разработка высоконагруженных сервисов на Go»</div>
+    <div class="meta">Неделя 1 • Занятие 1</div>
+</header>
+
+<nav class="topics">
+    <div class="container">
+        <a href="#topic1">Тема 1: Переменные, типы, условия</a>
+        <a href="#topic2">Тема 2: Циклы и срезы</a>
+        <a href="#examples">Примеры кода</a>
+    </div>
+</nav>
+
+<div class="content">
+    <div class="container">
+
+        <!-- ====== Тема 1 ====== -->
+        <section class="topic" id="topic1">
+            <h2>Тема 1: Введение в Go. Переменные и типы. Условия</h2>
+
+            <h3>Что такое Go?</h3>
+            <p>
+                <strong>Go (Golang)</strong> — компилируемый, статически типизированный язык программирования,
+                созданный в Google (2009). Авторы: Роберт Гриземер, Роб Пайк, Кен Томпсон.
+            </p>
+
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="icon">⚡</div>
+                    <div class="label">Простота</div>
+                    <div class="desc">Читаемый синтаксис, минимум магии</div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">🔥</div>
+                    <div class="label">Быстрая компиляция</div>
+                    <div class="desc">Секунды вместо минут</div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">🧵</div>
+                    <div class="label">Конкурентность</div>
+                    <div class="desc">Горутины и каналы встроены в язык</div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">📚</div>
+                    <div class="label">Стандартная библиотека</div>
+                    <div class="desc">HTTP, JSON, I/O из коробки</div>
+                </div>
+            </div>
+
+            <h3>Установка и настройка</h3>
+            <ol>
+                <li>Скачать Go с <a href="https://golang.org/dl/" target="_blank">golang.org</a></li>
+                <li>Установить, проверить версию:</li>
+            </ol>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+                <pre>go version</pre>
+            </div>
+
+            <h3>Первая программа</h3>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">package</span> main
+
+<span class="kw">import</span> <span class="str">"fmt"</span>
+
+<span class="kw">func</span> <span class="fn">main</span>() {
+    fmt.<span class="fn">Println</span>(<span class="str">"Hello, World!"</span>)
+}</pre>
+            </div>
+
+            <p>Запуск:</p>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+                <pre>go run main.go</pre>
+            </div>
+
+            <p>Компиляция и запуск бинарника:</p>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+                <pre>go build -o myapp main.go
+./myapp</pre>
+            </div>
+
+            <h3>Основы Go-модулей</h3>
+            <p>Инициализация нового модуля:</p>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+                <pre>go mod init myproject</pre>
+            </div>
+            <p>Файл <code>go.mod</code> содержит имя модуля и его зависимости.</p>
+
+            <h3>Переменные</h3>
+            <p>Go — статическая типизация. Тип указывается после имени или выводится автоматически.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="cm">// Полное объявление</span>
+<span class="kw">var</span> name <span class="ty">string</span> = <span class="str">"Alice"</span>
+
+<span class="cm">// С выводом типа</span>
+<span class="kw">var</span> age = <span class="num">30</span>
+
+<span class="cm">// Краткое объявление (только внутри функций)</span>
+city := <span class="str">"Moscow"</span>
+
+<span class="cm">// Множественное объявление</span>
+<span class="kw">var</span> x, y <span class="ty">int</span> = <span class="num">1</span>, <span class="num">2</span>
+<span class="kw">var</span> a, b = <span class="str">"hello"</span>, <span class="num">42</span>
+
+<span class="cm">// Групповое объявление</span>
+<span class="kw">var</span> (
+    width  <span class="ty">int</span>    = <span class="num">100</span>
+    height <span class="ty">int</span>    = <span class="num">200</span>
+    title  <span class="ty">string</span> = <span class="str">"Image"</span>
+)
+
+<span class="cm">// Zero values (значения по умолчанию)</span>
+<span class="kw">var</span> i <span class="ty">int</span>       <span class="cm">// 0</span>
+<span class="kw">var</span> f <span class="ty">float64</span>   <span class="cm">// 0</span>
+<span class="kw">var</span> s <span class="ty">string</span>    <span class="cm">// ""</span>
+<span class="kw">var</span> b <span class="ty">bool</span>      <span class="cm">// false</span></pre>
+            </div>
+
+            <div class="note">
+                <strong>Zero values:</strong> В Go у каждой переменной есть значение по умолчанию.
+                Не бывает неинициализированных переменных.
+            </div>
+
+            <h3>Базовые типы</h3>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="cm">// Числовые</span>
+<span class="kw">var</span> a <span class="ty">int8</span>   = <span class="num">127</span>          <span class="cm">// -128..127</span>
+<span class="kw">var</span> b <span class="ty">int16</span>  = <span class="num">32767</span>
+<span class="kw">var</span> c <span class="ty">int32</span>  = <span class="num">2147483647</span>
+<span class="kw">var</span> d <span class="ty">int64</span>  = <span class="num">9223372036854775807</span>
+
+<span class="kw">var</span> e <span class="ty">int</span>    = <span class="num">42</span>           <span class="cm">// платформозависимый (32 или 64 бита)</span>
+<span class="kw">var</span> u <span class="ty">uint</span>   = <span class="num">100</span>          <span class="cm">// платформозависимый беззнаковый</span>
+
+<span class="kw">var</span> f <span class="ty">float32</span> = <span class="num">3.14</span>
+<span class="kw">var</span> g <span class="ty">float64</span> = <span class="num">2.71828</span>
+
+<span class="cm">// Строки (immutable)</span>
+<span class="kw">var</span> s <span class="ty">string</span> = <span class="str">"Привет, Go!"</span>
+
+<span class="cm">// Булевы</span>
+<span class="kw">var</span> ok <span class="ty">bool</span> = <span class="nl">true</span></pre>
+            </div>
+
+            <h3>Константы</h3>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">const</span> Pi = <span class="num">3.14159</span>
+<span class="kw">const</span> (
+    StatusOK       = <span class="num">200</span>
+    StatusNotFound = <span class="num">404</span>
+)</pre>
+            </div>
+
+            <div class="note">
+                <strong>Важно:</strong> В Go нет неявного приведения типов — только явное преобразование.
+            </div>
+
+            <h3>Преобразование типов</h3>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre>i := <span class="num">42</span>
+f := <span class="ty">float64</span>(i)
+s := strconv.<span class="fn">Itoa</span>(i)  <span class="cm">// только для int</span>
+n, _ := strconv.<span class="fn">Atoi</span>(<span class="str">"123"</span>)</pre>
+            </div>
+
+            <h3>Условные операторы</h3>
+
+            <h4>if / else</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">if</span> x > <span class="num">0</span> {
+    fmt.<span class="fn">Println</span>(<span class="str">"positive"</span>)
+} <span class="kw">else if</span> x < <span class="num">0</span> {
+    fmt.<span class="fn">Println</span>(<span class="str">"negative"</span>)
+} <span class="kw">else</span> {
+    fmt.<span class="fn">Println</span>(<span class="str">"zero"</span>)
+}</pre>
+            </div>
+
+            <h4>switch</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="cm">// По значению</span>
+<span class="kw">switch</span> day {
+<span class="kw">case</span> <span class="num">1</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"Monday"</span>)
+<span class="kw">case</span> <span class="num">2</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"Tuesday"</span>)
+<span class="kw">default</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"Unknown"</span>)
+}
+
+<span class="cm">// Без выражения (как if-else)</span>
+<span class="kw">switch</span> {
+<span class="kw">case</span> score >= <span class="num">90</span>:
+    grade = <span class="str">"A"</span>
+<span class="kw">case</span> score >= <span class="num">80</span>:
+    grade = <span class="str">"B"</span>
+<span class="kw">default</span>:
+    grade = <span class="str">"F"</span>
+}</pre>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Важно:</strong> В Go в <code>case</code> не нужен <code>break</code> — выход происходит автоматически.
+                Чтобы провалиться дальше, используйте <code>fallthrough</code>.
+            </div>
+        </section>
+
+        <!-- ====== Тема 2 ====== -->
+        <section class="topic" id="topic2">
+            <h2>Тема 2: Циклы и срезы</h2>
+
+            <h3>Циклы</h3>
+            <p>В Go есть только одна конструкция цикла — <code>for</code>. Нет <code>while</code> или <code>do-while</code>.</p>
+
+            <h4>Классический for</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">for</span> i := <span class="num">0</span>; i < <span class="num">10</span>; i++ {
+    fmt.<span class="fn">Println</span>(i)
+}</pre>
+            </div>
+
+            <h4>for как while</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre>n := <span class="num">1</span>
+<span class="kw">for</span> n < <span class="num">100</span> {
+    n *= <span class="num">2</span>
+}</pre>
+            </div>
+
+            <h4>Бесконечный цикл</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">for</span> {
+    <span class="cm">// работает, пока не break</span>
+}</pre>
+            </div>
+
+            <h4>break и continue</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">for</span> i := <span class="num">0</span>; i < <span class="num">10</span>; i++ {
+    <span class="kw">if</span> i%<span class="num">2</span> == <span class="num">0</span> {
+        <span class="kw">continue</span>
+    }
+    <span class="kw">if</span> i > <span class="num">7</span> {
+        <span class="kw">break</span>
+    }
+    fmt.<span class="fn">Println</span>(i)
+}</pre>
+            </div>
+
+            <h3>Массивы</h3>
+            <p>Массив — фиксированного размера, передаётся по значению.</p>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">var</span> arr [<span class="num">5</span>]<span class="ty">int</span>          <span class="cm">// [0 0 0 0 0]</span>
+arr[<span class="num">0</span>] = <span class="num">1</span>
+arr2 := [<span class="num">3</span>]<span class="ty">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}
+arr3 := [...]<span class="ty">int</span>{<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>} <span class="cm">// размер определяется компилятором</span></pre>
+            </div>
+
+            <div class="note">
+                <strong>На практике</strong> массивы используются редко. Основной инструмент — <strong>срезы (slices)</strong>.
+            </div>
+
+            <h3>Срезы (Slices)</h3>
+            <p>Срез — динамическая структура данных, основной инструмент для работы с последовательностями в Go.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="cm">// Создание</span>
+<span class="kw">var</span> s []<span class="ty">int</span>
+s = <span class="fn">append</span>(s, <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+
+<span class="cm">// Литерал</span>
+s := []<span class="ty">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}
+
+<span class="cm">// make — с указанием длины и ёмкости</span>
+s := <span class="fn">make</span>([]<span class="ty">int</span>, <span class="num">5</span>)      <span class="cm">// len=5, cap=5</span>
+s := <span class="fn">make</span>([]<span class="ty">int</span>, <span class="num">3</span>, <span class="num">10</span>)  <span class="cm">// len=3, cap=10</span>
+
+<span class="cm">// Срез из массива</span>
+arr := [<span class="num">5</span>]<span class="ty">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>}
+slice := arr[<span class="num">1</span>:<span class="num">3</span>] <span class="cm">// [2, 3]</span></pre>
+            </div>
+
+            <h4>Внутреннее устройство среза</h4>
+            <p>Срез — это структура из трёх полей:</p>
+            <ul>
+                <li><strong>ptr</strong> — указатель на первый элемент в массиве</li>
+                <li><strong>len</strong> — длина</li>
+                <li><strong>cap</strong> — ёмкость (до конца массива)</li>
+            </ul>
+
+            <div class="diagram">┌──────────┐
+│ ptr ───────► [1] [2] [3] [4] [5]
+│ len = 3  │
+│ cap = 5  │
+└──────────┘</div>
+
+            <h4>Операции со срезами</h4>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre>s := []<span class="ty">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}
+
+<span class="cm">// append</span>
+s = <span class="fn">append</span>(s, <span class="num">4</span>, <span class="num">5</span>)     <span class="cm">// [1 2 3 4 5]</span>
+s = <span class="fn">append</span>(s, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>)  <span class="cm">// [1 2 3 4 5 6 7 8]</span>
+
+<span class="cm">// copy</span>
+dst := <span class="fn">make</span>([]<span class="ty">int</span>, <span class="fn">len</span>(s))
+<span class="fn">copy</span>(dst, s)
+
+<span class="cm">// Срез среза</span>
+sub := s[<span class="num">1</span>:<span class="num">3</span>]  <span class="cm">// [2 3]</span>
+sub := s[:<span class="num">2</span>]   <span class="cm">// [1 2]</span>
+sub := s[<span class="num">2</span>:]   <span class="cm">// [3 4 5 6 7 8]</span></pre>
+            </div>
+
+            <h4>Важно про append</h4>
+            <div class="warning">
+                <strong>⚠️ Если len &lt; cap</strong> — append записывает в существующий массив.<br>
+                <strong>Если len == cap</strong> — создаётся новый массив в 2 раза больше.
+            </div>
+
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre>s := <span class="fn">make</span>([]<span class="ty">int</span>, <span class="num">2</span>, <span class="num">4</span>) <span class="cm">// [0 0], cap=4</span>
+s2 := <span class="fn">append</span>(s, <span class="num">1</span>)     <span class="cm">// разделяют общий массив</span>
+s[<span class="num">0</span>] = <span class="num">99</span>              <span class="cm">// s2[0] тоже изменится!</span></pre>
+            </div>
+
+            <h3>range</h3>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre>nums := []<span class="ty">int</span>{<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>}
+
+<span class="kw">for</span> i, v := <span class="kw">range</span> nums {
+    fmt.<span class="fn">Printf</span>(<span class="str">"index=%d value=%d\n"</span>, i, v)
+}
+
+<span class="cm">// Пропуск индекса</span>
+<span class="kw">for</span> _, v := <span class="kw">range</span> nums {
+    fmt.<span class="fn">Println</span>(v)
+}
+
+<span class="cm">// Только индекс</span>
+<span class="kw">for</span> i := <span class="kw">range</span> nums {
+    fmt.<span class="fn">Println</span>(i)
+}</pre>
+            </div>
+        </section>
+
+        <!-- ====== Примеры кода ====== -->
+        <section class="topic" id="examples">
+            <h2>Примеры кода к занятию</h2>
+            <p>Все примеры находятся в директории <code>lesson01/examples/</code>:</p>
+            <ul>
+                <li><strong>hello/</strong> — Hello, World!</li>
+                <li><strong>variables/</strong> — Объявление переменных, типы</li>
+                <li><strong>conditions/</strong> — if/else, switch</li>
+                <li><strong>loops/</strong> — Циклы for</li>
+                <li><strong>slices/</strong> — Слайсы, append, copy</li>
+            </ul>
+            <p>Запуск любого примера:</p>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+                <pre>cd lesson01/examples/hello
+go run main.go</pre>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<footer class="footer">
+    Курс «Разработка высоконагруженных сервисов на Go» • Занятие 1
+</footer>
+
+</body>
+</html>
