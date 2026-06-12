@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Четвёрочка 2.0 — Функции и скидки</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f7f9fc;
+            color: #1a1a2e;
+            line-height: 1.7;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid #e94560;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .header .meta {
+            margin-top: 12px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav.topics {
+            background: #fff;
+            border-bottom: 1px solid #e0e6ed;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        nav.topics .container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        nav.topics a {
+            color: #0f3460;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        nav.topics a:hover {
+            border-bottom-color: #e94560;
+        }
+
+        .content {
+            padding: 40px 0 80px;
+        }
+
+        .topic {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+        }
+
+        .topic h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #e94560;
+            color: #1a1a2e;
+        }
+
+        .topic h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 28px 0 14px;
+            color: #16213e;
+        }
+
+        .topic h4 {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 22px 0 10px;
+            color: #0f3460;
+        }
+
+        .topic p {
+            margin-bottom: 14px;
+            font-size: 15.5px;
+        }
+
+        .topic ul, .topic ol {
+            margin: 10px 0 14px 24px;
+        }
+
+        .topic li {
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .topic strong {
+            color: #0f3460;
+        }
+
+        .topic .note {
+            background: #f0f4ff;
+            border-left: 4px solid #4a90d9;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14.5px;
+            color: #1a1a2e;
+        }
+
+        .topic .warning {
+            background: #fff8e6;
+            border-left: 4px solid #f0a500;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14.5px;
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block .lang-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #e94560;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 0 8px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .code-block pre {
+            padding: 18px 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e8e8f0;
+            overflow-x: auto;
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        .code-block .kw { color: #c792ea; }
+        .code-block .ty { color: #ffcb6b; }
+        .code-block .str { color: #c3e88d; }
+        .code-block .cm { color: #546e7a; font-style: italic; }
+        .code-block .fn { color: #82aaff; }
+        .code-block .num { color: #f78c6c; }
+        .code-block .op { color: #89ddff; }
+        .code-block .nl { color: #ff5370; }
+
+        .diagram {
+            background: #f0f4ff;
+            border: 1px solid #d0d8e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            color: #1a1a2e;
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 18px 0;
+        }
+
+        .key-point {
+            background: #f7f9fc;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .key-point .icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .key-point .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f3460;
+        }
+
+        .key-point .desc {
+            font-size: 12.5px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #888;
+            font-size: 13px;
+            border-top: 1px solid #e0e6ed;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 24px; }
+            .topic { padding: 20px; }
+            .code-block pre { font-size: 12.5px; padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>Магазин «Четвёрочка» — Функции и скидки</h1>
+    <div class="subtitle">Курс «Разработка высоконагруженных сервисов на Go»</div>
+    <div class="meta">Занятие 2 • Мини-проект • ~30 минут</div>
+</header>
+
+<nav class="topics">
+    <div class="container">
+        <a href="#intro">Введение</a>
+        <a href="#funcs">Функции</a>
+        <a href="#map">Словарь скидок</a>
+        <a href="#menu">Новые пункты меню</a>
+        <a href="#example">Пример работы</a>
+        <a href="#criteria">Критерии</a>
+    </div>
+</nav>
+
+<div class="content">
+    <div class="container">
+
+        <section class="topic" id="intro">
+            <h2>Введение</h2>
+            <p>
+                Продолжаем развивать программу управления магазином
+                <strong>«Четвёрочка»</strong>. Теперь мы умеем писать <strong>функции</strong>
+                и работать со <strong>словарями (map)</strong>.
+            </p>
+            <p>
+                Возьмите свою программу с прошлого занятия и модернизируйте её.
+                В этом проекте вы вынесете повторяющуюся логику в функции и добавите
+                новую возможность — <strong>скидки на товары</strong>.
+            </p>
+
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="icon">🔧</div>
+                    <div class="label">3 функции</div>
+                    <div class="desc">calculateDiscountedPrice, printProductLine, findProduct</div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">📖</div>
+                    <div class="label">map[string]float64</div>
+                    <div class="desc">Словарь для хранения скидок</div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">➕</div>
+                    <div class="label">+3 пункта меню</div>
+                    <div class="desc">Установить, показать, очистить скидки</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="topic" id="funcs">
+            <h2>Часть 1. Напишите три функции</h2>
+
+            <h3>calculateDiscountedPrice</h3>
+            <p>Принимает цену и процент скидки, возвращает цену со скидкой.</p>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">func</span> <span class="fn">calculateDiscountedPrice</span>(price, discountPercent <span class="ty">float64</span>) <span class="ty">float64</span></pre>
+            </div>
+
+            <h3>printProductLine</h3>
+            <p>
+                Выводит строку каталога: номер, название, цена, скидка, цена со скидкой.
+                Внутри себя вызывает <code>calculateDiscountedPrice</code>.
+            </p>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">func</span> <span class="fn">printProductLine</span>(number <span class="ty">int</span>, name <span class="ty">string</span>, price, discount <span class="ty">float64</span>)</pre>
+            </div>
+            <p>Если скидка не установлена &mdash; выводите прочерк (&laquo;&mdash;&raquo;).</p>
+
+            <h3>findProduct</h3>
+            <p>Ищет товар по названию в срезе <code>names</code>. Возвращает индекс или <code>-1</code>, если не найден.</p>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre><span class="kw">func</span> <span class="fn">findProduct</span>(names []<span class="ty">string</span>, product <span class="ty">string</span>) <span class="ty">int</span></pre>
+            </div>
+        </section>
+
+        <section class="topic" id="map">
+            <h2>Часть 2. Добавьте словарь скидок</h2>
+
+            <p>В <code>main()</code> объявите словарь:</p>
+            <div class="code-block">
+                <span class="lang-label">Go</span>
+                <pre>discounts := <span class="kw">make</span>(<span class="kw">map</span>[<span class="ty">string</span>]<span class="ty">float64</span>)</pre>
+            </div>
+            <p>
+                Ключ &mdash; название товара, значение &mdash; процент скидки
+                (например, <code>10.0</code> означает 10%).
+            </p>
+            <div class="note">
+                Если на товар нет скидки &mdash; при обращении к <code>discounts[name]</code>
+                вернётся <code>0.0</code>. Передавайте 0 в <code>printProductLine</code>,
+                и функция отобразит прочерк.
+            </div>
+        </section>
+
+        <section class="topic" id="menu">
+            <h2>Часть 3. Новые пункты меню</h2>
+
+            <p>Добавьте в меню три новых пункта (после прежних 9):</p>
+
+            <div class="diagram">10. Установить скидку
+11. Показать каталог со скидками
+12. Очистить все скидки
+13. Выход (или переместите Выход на 13)</div>
+
+            <div class="warning">
+                В исходной программе пункт 9 &mdash; «Выход». Перенесите его на 13 или оставьте
+                на 9, а новые пункты добавьте как 10, 11, 12. Выберите любой вариант.
+            </div>
+
+            <h3>Пункт 10. Установить скидку</h3>
+            <ol>
+                <li>Запросить название товара.</li>
+                <li>Через <code>findProduct</code> проверить, что товар существует. Если нет &mdash; вывести &laquo;Товар не найден.&raquo;</li>
+                <li>Запросить процент скидки.</li>
+                <li>Сохранить в <code>discounts[name] = discount</code>.</li>
+            </ol>
+
+            <h3>Пункт 11. Показать каталог со скидками</h3>
+            <ol>
+                <li>Вывести заголовок таблицы: <kbd>№  Название  Цена  Скидка  Цена со скидкой</kbd>.</li>
+                <li>Для каждого товара из <code>names</code> получить скидку из <code>discounts</code>.</li>
+                <li>Вызвать <code>printProductLine</code> для вывода строки.</li>
+            </ol>
+
+            <h3>Пункт 12. Очистить все скидки</h3>
+            <ol>
+                <li>Присвоить <code>discounts = make(map[string]float64)</code>.</li>
+                <li>Вывести &laquo;Все скидки очищены.&raquo;</li>
+            </ol>
+        </section>
+
+        <section class="topic" id="example">
+            <h2>Пример работы</h2>
+
+            <div class="diagram">--- Магазин "Четвёрочка" 2.0 ---
+...
+10. Установить скидку
+11. Показать каталог со скидками
+12. Очистить все скидки
+Выберите действие: 10
+Название товара: Сыр
+Процент скидки: 15
+Скидка 15% на "Сыр" установлена.
+
+Выберите действие: 11
+
+№  Название          Цена     Скидка  Цена со скидкой
+1  Молоко            89.90    —       89.90
+2  Хлеб              45.00    —       45.00
+3  Сыр              350.00    -15%   297.50
+4  Колбаса          280.00    —      280.00
+5  Масло            180.00    —      180.00</div>
+        </section>
+
+        <section class="topic" id="criteria">
+            <h2>Критерии приёмки</h2>
+
+            <ul>
+                <li>Все три функции написаны и используются в программе</li>
+                <li>Словарь <code>discounts</code> используется для хранения скидок</li>
+                <li>Новые пункты меню (10&ndash;12) работают без ошибок</li>
+                <li>Старые пункты меню (1&ndash;9) продолжают работать как раньше</li>
+                <li>Код отформатирован (<code>go fmt</code>)</li>
+            </ul>
+        </section>
+
+    </div>
+</div>
+
+<div class="footer">
+    Курс «Разработка высоконагруженных сервисов на Go» • Занятие 2
+</div>
+
+</body>
+</html>
